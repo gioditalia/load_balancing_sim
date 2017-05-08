@@ -19,41 +19,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include<stdlib.h>
 #include<malloc.h>
 
+#include "msglist.h"
 #include "joblist.h"
 
-struct Job *new_Job(int nCpu, int startTime, int jobTime){
-    struct Job *new;
-    new = (struct Job *)malloc(sizeof(struct Job));
-    new->nCpu = nCpu;
-    new->startTime = startTime;
-    new->jobTime = jobTime;
-    new->exeCPU = 0;
+struct Msg *new_Msg(int from, int to, int code, struct Job *job){
+    struct Msg *new;
+    new = (struct Msg *)malloc(sizeof(struct Msg));
+    new->from = from;
+    new->to = to;
+    new->code = code;
+    new->job = job;
     new->p = NULL;
     return new;
 }
 
-struct Job *add_Job(struct Job *list ,struct Job *ele)
+struct Msg *add_Msg(struct Msg *list ,struct Msg *ele)
 {
     ele->p=list;
     return ele;
 }
 
-struct Job *assign_Job(struct Job *list, int CPU){
-    list->exeCPU = CPU;
-    return list;
-}
 
-struct Job extract_Job(struct Job **list){
-    struct Job tmp;
-    struct Job *old;
+struct Msg extract_Msg(struct Msg **list){
+    struct Msg tmp;
+    struct Msg *old;
     old = *(list);
     if((*list)->p!=NULL){
-    for(;(*list)->p->p != NULL;*list = (*list)->p);
-    tmp = *((*list)->p);
-    free((*list)->p);
-    (*list)->p=NULL;
-    *list = old;
-    return tmp;
+        for(;(*list)->p->p != NULL;*list = (*list)->p);
+        tmp = *((*list)->p);
+        free((*list)->p);
+        (*list)->p=NULL;
+        *list = old;
+        return tmp;
     }
     else{
         tmp=**list;
@@ -65,9 +62,9 @@ struct Job extract_Job(struct Job **list){
     }
 }
 
-struct Job extract_Head_Job(struct Job **list){
-    struct Job tmp;
-    struct Job *old;
+struct Msg extract_Head_Msg(struct Msg **list){
+    struct Msg tmp;
+    struct Msg *old;
     tmp = **list;
     old = *(list);
     *list=old->p;
@@ -76,18 +73,18 @@ struct Job extract_Head_Job(struct Job **list){
     return tmp;
 }
 
-int check_Job_List(struct Job *list){
+int check_Msg_List(struct Msg *list){
     if(!(list==NULL)){return 1;};
     return 0;
 }
 
-void print_Jobs(struct Job *list){
+void print_Msgs(struct Msg *list){
     for(;list != NULL;list = list->p){
         printf(" ADDR=%x\n",list);
-        printf(" CPU=%d\n",list->nCpu);
-        printf(" START=%d\n",list->startTime);
-        printf(" TIME=%d\n",list->jobTime);
-        printf(" ASS=%d\n",list->exeCPU);
+        printf(" FROM=%d\n",list->from);
+        printf(" TO=%d\n",list->to);
+        printf(" CODE=%d\n",list->code);
+        printf(" JOB=%x\n",list->job);
         printf(" ADDRPUNT=%x\n",list->p);
         printf("\n");
     }

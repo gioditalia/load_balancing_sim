@@ -15,14 +15,27 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef MSGLIST_H
+#define MSGLIST_H
 
-FILE *log_file;
+// struct
+struct Msg{
+    int from;
+    int to;
+    int code;   // 0->ok    1->invia job    2->chiedi job
+    struct Job *job;
+    struct Msg *p;
+};
 
-void set_Log_File();
-void close_Log();
-void write_Log(const char *str, ... );
+// prototypes
+//manage msg lists
+struct Msg *new_Msg(int from, int to, int code, struct Job *job);
+struct Msg *add_Msg(struct Msg *list ,struct Msg *ele);
+struct Msg extract_Msg(struct Msg **list);
+struct Msg extract_Head_Msg(struct Msg **list);
+int check_Msg_List(struct Msg *list);
 
+//print msg lists
+void print_Msgs(struct Msg *list);
 
-#endif /* UTILS */
+#endif /* MSGLIST */
